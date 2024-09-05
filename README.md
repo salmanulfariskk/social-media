@@ -27,9 +27,10 @@ This is a simple social media application where users can create posts, like pos
 
    
    git clone https://github.com/salmanulfariskk/social-media.git
+   
    cd social-media-app
 
-2. **Set Up the Backend**
+3. **Set Up the Backend**
 
    cd backend
 
@@ -37,7 +38,7 @@ This is a simple social media application where users can create posts, like pos
   
    npm run dev
 
-3. **Set Up the Frontend**
+4. **Set Up the Frontend**
    
    cd ../frontend
 

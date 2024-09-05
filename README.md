@@ -26,7 +26,7 @@ This is a simple social media application where users can create posts, like pos
 1. **Clone the Repository**
 
    
-   git clone https://github.com/salmanulfariskk/social-media-app.git
+   git clone https://github.com/salmanulfariskk/social-media.git
    cd social-media-app
 
 2. **Set Up the Backend**

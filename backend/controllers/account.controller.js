@@ -31,5 +31,6 @@ exports.createAccountHandler = asyncHandler(async (req, res) => {
     .json({
       id: user.id,
       name: user.name,
+      email: user.email,
     });
 });

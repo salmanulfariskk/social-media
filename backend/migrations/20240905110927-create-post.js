@@ -19,17 +19,19 @@ module.exports = {
       },
       userId: {
         type: Sequelize.INTEGER,
-        allowNull:false,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
       }
-    }).then(() => {});
+    });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('posts');

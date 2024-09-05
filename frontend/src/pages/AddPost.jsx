@@ -1,22 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useFormik } from "formik";
 import { postSchema } from "./../validations/postValidation";
+import axiosInstance from "../utils/axiosInstance";
 
 function AddPost() {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
-  const [photo, setPhoto] = useState(null);
   const [fileError, setFileError] = useState("");
   const navigate = useNavigate();
 
   const validImageTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
 
   const onSubmit = async (values) => {
-    console.log('thi is values--',values);
-    console.log('thi is photo--',photo);
-    
     if (!image) {
       toast.error("Please select an image");
       return; 
@@ -28,9 +25,18 @@ function AddPost() {
     }
 
     try {
-      
+      const formData = new FormData();
+      formData.append('caption', values.caption);
+      formData.append('file', image);
+
+      const response = await axiosInstance.post('/api/posts/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
       toast.success("Post added successfully");
-      navigate("/"); 
+      navigate("/");
     } catch (error) {
       console.log(error.message);
       toast.error("Something went wrong. Please try again.");
@@ -53,26 +59,14 @@ function AddPost() {
       setFileError("Please select a valid image file (jpg, png, gif)");
       setImage(null);
       setImagePreview("");
-      setPhoto(null);
       return;
     }
 
     setFileError("");
-    const selectedPhoto = e.target.files[0];
-    setPhotoToBase(selectedPhoto);
-
     if (file) {
       setImage(file);
       setImagePreview(URL.createObjectURL(file));
     }
-  };
-
-  const setPhotoToBase = (file) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      setPhoto(reader.result);
-    };
   };
 
   return (

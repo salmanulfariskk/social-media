@@ -1,33 +1,41 @@
-import React from 'react';
-import PostList from '../components/feed/PostList';
-
-const mockPosts = [
-  {
-    id: 1,
-    username: 'user1',
-    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMLBJQcs8qS1dSICQfj1e8BHQh5Cnbfna_Y_6ueaPUhKU5esht',
-    caption: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit soluta quam, veniam illum consequuntur ut eius velit ex doloremque cum nemo expedita dignissimos quod molestiae maiores autem est cumque culpa?',
-    
-    likes: 12,
-  }
-  ,
-  {
-    id: 2,
-    username: 'user2',
-    imageUrl: 'https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcSS1nO0q_mHLaAa2IgxX7yABEgX9CgOeB-5j0RaoMDwnwAP-6Mv9ZpA3Wrh-PNfbO5p6RsaoA2SxHRNK5s',
-    caption: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit soluta quam, veniam illum consequuntur ut eius velit ex doloremque cum nemo expedita dignissimos quod molestiae maiores autem est cumque culpa?',
-    likes: 34,
-  },
-];
+import React, { useState, useEffect } from "react";
+import PostList from "../components/feed/PostList";
+import axiosInstance from "../utils/axiosInstance";
+import { Link } from "react-router-dom";
 
 function Home() {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axiosInstance.get("/api/posts/");
+        setPosts(response.data);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
   return (
     <div className="container mx-auto p-4">
-      <PostList posts={mockPosts} />
+      {posts.length > 0 ? (
+        <PostList posts={posts} />
+      ) : (
+        <div className="text-center mt-10">
+          <p className="text-xl mb-4 text-white">No posts available.</p>
+          <p className="text-lg mb-4 text-white">Do you want to create a new post?</p>
+          <Link to="/add-post">
+            <button className="p-2 text-white rounded-md active:scale-95 bg-fuchsia-700">
+              Add Post
+            </button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
 
 export default Home;
-
-

@@ -1,19 +1,28 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useFormik } from "formik";
 import { loginSchema } from "../../validations/loginValidation";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../utils/axiosInstance";
 
 function Login() {
   const navigate = useNavigate();
 
   const onSubmit = async (values) => {
+    console.log('hello world');
+    
     try {
-      console.log(values, "hello world");
-      navigate("/");
+      const response = await axiosInstance.post('api/sessions',values)
+      if(response.status==201){
+        toast.success("logged in successfully")
+        localStorage.setItem('user',JSON.stringify(response.data))
+        navigate("/");
+      }
+      console.log(response.data);
     } catch (error) {
-      console.log(error.message);
+      toast.error(error.response?.data?.error?.message)
+      console.log(error);
     }
   };
 

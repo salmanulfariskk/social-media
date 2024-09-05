@@ -1,19 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from 'sonner'
 import { useFormik } from "formik";
 import { userSchema } from "../../validations/signupValidation";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../utils/axiosInstance";
 
 function Register() {
   const navigate = useNavigate();
 
   async function onSubmit(values) {
     try {
-      console.log("hello world", values);
-      navigate("/login");
+      const response = await axiosInstance.post('api/account/create',values)
+      if(response.status==201){
+        toast.success("Account created successfully")
+        navigate("/login");
+      }
+      console.log(response.data);
     } catch (error) {
-      console.log(error.message);
+      toast.error(error.response.data?.error?.message)
+      console.log(error);
     }
   }
 
@@ -31,6 +37,7 @@ function Register() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
+      
       <div className="max-w-md w-full">
         <form
           onSubmit={handleSubmit}

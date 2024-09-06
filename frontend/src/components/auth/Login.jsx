@@ -1,22 +1,24 @@
-import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useFormik } from "formik";
 import { loginSchema } from "../../validations/loginValidation";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
+import { useDispatch } from "react-redux";
+import { setSession } from "../../features/session/sessionReducer";
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const onSubmit = async (values) => {
     console.log('hello world');
     
     try {
-      const response = await axiosInstance.post('api/sessions',values)
+      const response = await axiosInstance.post('/sessions',values)
       if(response.status==201){
         toast.success("logged in successfully")
-        localStorage.setItem('user',JSON.stringify(response.data))
+        dispatch(setSession(response.data))
         navigate("/");
       }
       console.log(response.data);
@@ -84,14 +86,16 @@ function Login() {
               <p className="text-red-600">{errors.password}</p>
             )}
           </div>
-          <button
-            type="submit"
-            className="bg-fuchsia-800 text-white px-4 py-2 rounded w-full"
-          >
-            Login
-          </button>
+          <div className="grid">
+            <button
+              type="submit"
+              className="h-9 px-3 flex items-center justify-center select-none whitespace-nowrap transition-colors text-sm font-semibold rounded-md text-white bg-fuchsia-800 hover:bg-fuchsia-800/90"
+            >
+              Login
+            </button>
+          </div>
           <div className="mt-7 font-semibold">
-            Don't have an account ?
+            Don&apos;t have an account ?
             <Link to={"/register"}>
               {" "}
               <span className="text-fuchsia-800 underline hover:cursor-pointer">

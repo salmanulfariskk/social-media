@@ -1,51 +1,39 @@
-import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+// import Button from "../ui/button";
 
 function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState("");
-
-  // Check if user data exists in localStorage on component mount
-  useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      const userData = JSON.parse(user);
-      setIsLoggedIn(true);
-      setUserName(userData.name); // Retrieve user's name from localStorage
-    } else {
-      setIsLoggedIn(false);
-    }
-  }, []);
-
-  // Extract the first letter of the user's name for the profile icon
-  const profileIcon = userName ? userName[0].toUpperCase() : "?";
+  const { isLoggedIn, user } = useSelector((state) => state.session);
 
   return (
-    <nav className="bg-fuchsia-950 p-4 text-white flex justify-between items-center">
-      <Link to="/" className="text-xl font-bold">
-        SocialApp
+    <nav className="bg-white drop-shadow-sm px-4 h-14 flex justify-between items-center">
+      <Link to="/" className="text-xl text-fuchsia-800 font-bold tracking-wide uppercase select-none">
+        Social Book
       </Link>
-      <div>
+      <div className="space-x-4 flex">
         {isLoggedIn ? (
-          // Display the first letter of the user's name and Add Post link when logged in
           <div className="flex items-center ml-10">
-            <Link to="/add-post" className="text-white hover:underline">
-              <button className="p-2 rounded-md active:scale-95 hover:bg-fuchsia-600 bg-fuchsia-800">
-                Add Post
-              </button>
+            <Link
+              to="/add-post"
+              className="h-9 px-3 flex items-center justify-center select-none whitespace-nowrap transition-colors text-sm font-semibold rounded-md text-white bg-fuchsia-800 hover:bg-fuchsia-800/90"
+            >
+              Create post
             </Link>
+            {/* <Button asChild>
+            </Button> */}
 
-            <Link to="/profile" className="ml-4 flex items-center justify-center w-10 h-10 bg-fuchsia-800 text-white rounded-full text-xl font-bold">
-              {profileIcon}
+            <Link
+              to="/profile"
+              className="ml-4 flex items-center justify-center w-10 h-10 bg-slate-100 text-black select-none rounded-full text-xl font-bold"
+            >
+              {user.name.charAt(0).toUpperCase()}
             </Link>
           </div>
         ) : (
           // Login and Register links when not logged in
           <>
-            <Link to="/login" className="mr-4">
-              Login
-            </Link>
-            <Link to="/register">Register</Link>
+            <Link to="/login" className="h-9 px-3 flex items-center justify-center select-none whitespace-nowrap transition-colors text-sm font-semibold rounded-md text-black border border-solid border-[#ddd] hover:bg-black/10">Login</Link>
+            <Link to="/register" className="h-9 px-3 flex items-center justify-center select-none whitespace-nowrap transition-colors text-sm font-semibold rounded-md text-white bg-fuchsia-800 hover:bg-fuchsia-800/90">Register</Link>
           </>
         )}
       </div>

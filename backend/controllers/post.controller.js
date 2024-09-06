@@ -25,6 +25,12 @@ exports.createPostHandler = asyncHandler(async (req, res) => {
 });
 
 exports.getAllPostsHandler = asyncHandler(async (req, res) => {
+  console.log(req.query)
+  const { page, limit } = req.query;
+  const pageSize = parseInt(limit) + 1;
+
+  const offset = (parseInt(page) - 1) * parseInt(limit);
+
   try {
     const posts = await Post.findAll({
       attributes: {
@@ -41,7 +47,9 @@ exports.getAllPostsHandler = asyncHandler(async (req, res) => {
           [
             sequelize.literal(`
               EXISTS (
-                SELECT 1 FROM likes WHERE likes.postId = Post.id AND likes.userId = ${sequelize.escape(req.userId)}
+                SELECT 1 FROM likes WHERE likes.postId = Post.id AND likes.userId = ${sequelize.escape(
+                  req.userId
+                )}
               )
             `),
             "liked",
@@ -55,9 +63,16 @@ exports.getAllPostsHandler = asyncHandler(async (req, res) => {
           attributes: getUserRelationAttributes(req.userId),
         },
       ],
+      offset,
+      limit: pageSize,
+      order: [["createdAt", "DESC"]],
     });
 
-    return res.status(200).json(posts);
+    const hasMore = posts.length > parseInt(limit);
+
+    return res
+      .status(200)
+      .json({ posts: posts.slice(0, parseInt(limit)), pageContext: { hasMore } });
   } catch (error) {
     console.error("Error fetching posts:", error);
     return res.status(500).json({ message: "Failed to fetch posts" });
@@ -84,7 +99,9 @@ exports.getSinglePostHandler = asyncHandler(async (req, res) => {
           [
             sequelize.literal(`
               EXISTS (
-                SELECT 1 FROM likes WHERE likes.postId = Post.id AND likes.userId = ${sequelize.escape(req.userId)}
+                SELECT 1 FROM likes WHERE likes.postId = Post.id AND likes.userId = ${sequelize.escape(
+                  req.userId
+                )}
               )
             `),
             "liked",

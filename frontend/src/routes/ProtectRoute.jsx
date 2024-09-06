@@ -1,11 +1,15 @@
-import React from "react";
 import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function ProtectRoute(props) {
-  if (localStorage.getItem('user')) {
-    return props.children;
+  const { isLoggedIn } = useSelector((state) => state.session);
+
+  if (!isLoggedIn) {
+    return <Navigate to={"/login"} replace />;
   }
-  return <Navigate to={"/login"} />;
+
+  console.log("pass");
+  return props.children;
 }
 
 export default ProtectRoute;

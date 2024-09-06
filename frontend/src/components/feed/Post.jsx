@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
-import LikeButton from '../common/LikeButton';
-import OptionDots from '../common/OptionDots';
+import { useState } from "react";
+import LikeButton from "../common/LikeButton";
+import OptionDots from "../common/OptionDots";
+import axiosInstance from "../../utils/axiosInstance";
+import { useSelector } from "react-redux";
 
 function Post({ post }) {
   const [liked, setLiked] = useState(post.liked === 1);
   const [likeCount, setLikeCount] = useState(post.likeCount);
+  const { user } = useSelector(state => state.session)
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikeCount(likeCount + (liked ? -1 : 1));
+  const handleLike = async () => {
+    try {
+      await axiosInstance.post(`/likes/${post.id}`);
+      setLiked(!liked);
+      setLikeCount(likeCount + (liked ? -1 : 1));
+    } catch (error) {
+      console.log(error?.response.data?.message);
+    }
   };
 
   return (
@@ -21,7 +29,11 @@ function Post({ post }) {
             </div>
             <div className="ml-2 font-semibold">{post.author.name}</div>
           </div>
-          <OptionDots />
+          {post.author.id !== user.id && (
+            <OptionDots
+              user={post.author}
+            />
+          )}
         </div>
         <img
           src={post.photo}
@@ -29,7 +41,7 @@ function Post({ post }) {
           className="w-full h-[350px] object-contain rounded"
         />
         <div className="mt-2 flex items-center">
-          <LikeButton liked={liked} onLike={handleLike} />
+          <LikeButton liked={liked} onToggleLike={handleLike} />
           <span className="ml-2">{likeCount} likes</span>
         </div>
         <div className="mt-2">

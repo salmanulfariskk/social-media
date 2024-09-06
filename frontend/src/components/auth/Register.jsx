@@ -1,24 +1,26 @@
-import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from 'sonner'
+import { toast } from "sonner";
 import { useFormik } from "formik";
 import { userSchema } from "../../validations/signupValidation";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
+import { useDispatch } from "react-redux";
+import { setSession } from "../../features/session/sessionReducer";
 
 function Register() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   async function onSubmit(values) {
     try {
-      const response = await axiosInstance.post('api/account/create',values)
-      if(response.status==201){
-        toast.success("Account created successfully")
-        navigate("/login");
+      const response = await axiosInstance.post("/account/create", values);
+      if (response.status == 201) {
+        toast.success("Account created successfully");
+        dispatch(setSession(response.data));
+        navigate("/");
       }
-      console.log(response.data);
     } catch (error) {
-      toast.error(error.response.data?.error?.message)
+      toast.error(error.response.data?.error?.message);
       console.log(error);
     }
   }
@@ -37,7 +39,6 @@ function Register() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      
       <div className="max-w-md w-full">
         <form
           onSubmit={handleSubmit}
@@ -118,16 +119,17 @@ function Register() {
               <p className="text-red-600">{errors.confirmPassword}</p>
             )}
           </div>
-          <button
-            type="submit"
-            className="bg-fuchsia-800 text-white px-4 py-2 rounded w-full"
-          >
-            Register
-          </button>
-          <div className="mt-7 font-semibold">
-            Don't have an account ?
+          <div className="grid">
+            <button
+              type="submit"
+              className="h-9 px-3 flex items-center justify-center select-none whitespace-nowrap transition-colors text-sm font-semibold rounded-md text-white bg-fuchsia-800 hover:bg-fuchsia-800/90"
+            >
+              Register
+            </button>
+          </div>
+          <div className="mt-7 font-semibold space-x-1">
+            <span>Don&apos;t have an account?</span>
             <Link to={"/login"}>
-              {" "}
               <span className="text-fuchsia-800 underline hover:cursor-pointer">
                 Login
               </span>

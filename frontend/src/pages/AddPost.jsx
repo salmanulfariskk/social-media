@@ -29,7 +29,7 @@ function AddPost() {
       formData.append('caption', values.caption);
       formData.append('file', image);
 
-      const response = await axiosInstance.post('/api/posts/', formData, {
+      await axiosInstance.post('/posts/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -110,7 +110,7 @@ function AddPost() {
               onChange={handleChange}
               onBlur={handleBlur}
               name="caption"
-              className="mt-1 block w-full border border-gray-300 rounded-md"
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2 outline-none resize-y"
               rows="3"
             />
             {errors.caption && touched.caption && (
@@ -120,7 +120,7 @@ function AddPost() {
 
           <button
             type="submit"
-            className="bg-fuchsia-800 text-white px-4 py-2 rounded w-full"
+            className="h-9 px-3 flex items-center justify-center select-none whitespace-nowrap transition-colors text-sm font-semibold rounded-md text-white bg-fuchsia-800 hover:bg-fuchsia-800/90 w-full"
           >
             Add Post
           </button>
